@@ -1,102 +1,102 @@
-// Select DOM elements
-const bodyElement = document.querySelector("body");
-const navbarMenu = document.querySelector("#cs-navigation");
-const hamburgerMenu = document.querySelector("#cs-navigation .cs-toggle");
+var CSbody = document.querySelector("body");
+const CSnavbarMenu = document.querySelector("#cs-navigation");
+const CShamburgerMenu = document.querySelector("#cs-navigation .cs-toggle");
+// added this
+const csUL = document.querySelector("#cs-expanded");
 
-// Function to toggle the aria-expanded attribute
-function toggleAriaExpanded(element) {
-    const isExpanded = element.getAttribute("aria-expanded");
-    element.setAttribute("aria-expanded", isExpanded === "false" ? "true" : "false");
+CShamburgerMenu.addEventListener("click", function () {
+	CShamburgerMenu.classList.toggle("cs-active");
+	CSnavbarMenu.classList.toggle("cs-active");
+
+	CSbody.classList.toggle("cs-open");
+	// run the function to check the aria-expanded value
+	ariaExpanded();
+});
+
+// checks the value of aria expanded on the cs-ul and changes it accordingly whether it is expanded or not
+function ariaExpanded() {
+	const csUL = document.querySelector("#cs-expanded");
+	const csExpanded = csUL.getAttribute("aria-expanded");
+
+	if (csExpanded === "false") {
+		csUL.setAttribute("aria-expanded", "true");
+	} else {
+		csUL.setAttribute("aria-expanded", "false");
+	}
 }
 
-// Function to toggle the menu open or closed
-function toggleMenu() {
-    hamburgerMenu.classList.toggle("cs-active");
-    navbarMenu.classList.toggle("cs-active");
-    bodyElement.classList.toggle("cs-open");
-    toggleAriaExpanded(hamburgerMenu);
+// render a cs-ul2 for each cs-dropdown
+function renderAllDropdowns() {
+	const csUL = document.querySelector("#cs-expanded"); // Target cs-ul directly
+	const dropDowns = document.querySelectorAll("#cs-navigation .cs-dropdown");
+
+	// Create empty cs-ul2 (active by default)
+	const emptyUL2 = document.createElement("ul");
+	emptyUL2.classList.add("cs-ul2", "cs-active");
+	csUL.insertAdjacentElement("afterend", emptyUL2);
+
+	// Create cs-ul2 for each dropdown
+	dropDowns.forEach((dropdown, index) => {
+		const dropUL = dropdown.querySelector(".cs-drop-ul");
+		if (dropUL) {
+			const newUL2 = document.createElement("ul");
+			newUL2.classList.add("cs-ul2", "cs-hidden");
+			newUL2.dataset.index = index;
+			newUL2.innerHTML = dropUL.innerHTML;
+			csUL.insertAdjacentElement("afterend", newUL2);
+		}
+	});
 }
 
-// Add click event listener to the hamburger menu
-hamburgerMenu.addEventListener("click", toggleMenu);
+// mobile nav toggle code
+const dropDowns = Array.from(document.querySelectorAll("#cs-navigation .cs-dropdown"));
 
-// Add click event listener to the navbar menu to handle clicks on the pseudo-element
-navbarMenu.addEventListener("click", function (event) {
-    if (event.target === navbarMenu && navbarMenu.classList.contains("cs-active")) {
-        toggleMenu();
-    }
+dropDowns.forEach((item, index) => {
+	const onClick = () => {
+		item.classList.toggle("cs-active");
+		csUL.classList.toggle("cs-active");
+
+		dropDowns.forEach((otherItem) => {
+			if (otherItem !== item) {
+				otherItem.classList.remove("cs-active");
+			}
+		});
+
+		const csULWrapper2 = document.querySelector(".cs-ul-wrapper2");
+		const targetUL2 = csULWrapper2.querySelector(`[data-index="${index}"]`);
+
+		if (item.classList.contains("cs-active")) {
+			// Remove cs-active from all cs-ul2s
+			csULWrapper2.querySelectorAll(".cs-ul2").forEach((ul) => {
+				ul.classList.remove("cs-active");
+				ul.classList.add("cs-hidden");
+			});
+
+			// Add cs-active to target cs-ul2
+			if (targetUL2) {
+				targetUL2.classList.add("cs-active");
+				targetUL2.classList.remove("cs-hidden");
+			}
+
+			csULWrapper2.classList.add("cs-active");
+		} else {
+			// Hide target cs-ul2, show empty one
+			if (targetUL2) {
+				targetUL2.classList.remove("cs-active");
+				targetUL2.classList.add("cs-hidden");
+			}
+
+			// Show empty cs-ul2
+			const emptyUL2 = csULWrapper2.querySelector(".cs-ul2:not([data-index])");
+			if (emptyUL2) {
+				emptyUL2.classList.add("cs-active");
+				emptyUL2.classList.remove("cs-hidden");
+			}
+
+			csULWrapper2.classList.remove("cs-active");
+		}
+	};
+	item.addEventListener("click", onClick);
 });
 
-// Function to handle dropdown toggle
-function toggleDropdown(element) {
-    element.classList.toggle("cs-active");
-    const dropdownButton = element.querySelector(".cs-dropdown-button");
-    if (dropdownButton) {
-        toggleAriaExpanded(dropdownButton);
-    }
-}
-
-// Add event listeners to each dropdown element for accessibility
-const dropdownElements = document.querySelectorAll(".cs-dropdown");
-dropdownElements.forEach(element => {
-    let escapePressed = false;
-
-    element.addEventListener("focusout", function (event) {
-        // Skip the focusout logic if escape was pressed
-        if (escapePressed) {
-            escapePressed = false;
-            return;
-        }
-
-        // If the focus has moved outside the dropdown, remove the active class from the dropdown 
-        if (!element.contains(event.relatedTarget)) {
-            element.classList.remove("cs-active");
-            const dropdownButton = element.querySelector(".cs-dropdown-button");
-
-            if (dropdownButton) {
-                toggleAriaExpanded(dropdownButton);
-            }
-        }
-    });
-
-    element.addEventListener("keydown", function (event) {
-        if (element.classList.contains("cs-active")) {
-            event.stopPropagation();
-        }
-
-        // Pressing Enter or Space will toggle the dropdown and adjust the aria-expanded attribute
-        if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            toggleDropdown(element);
-        }
-
-        // Pressing Escape will remove the active class from the dropdown. The stopPropagation above will stop the hamburger menu from closing
-        if (event.key === "Escape") {
-            escapePressed = true;
-            toggleDropdown(element);
-        }
-    });
-
-    // Handles dropdown menus on mobile - the matching media query (max-width: 63.9375rem) is necessary so that clicking the dropdown button on desktop does not add the active class and thus interfere with the hover state
-    const maxWidthMediaQuery = window.matchMedia("(max-width: 63.9375rem)");
-    if (maxWidthMediaQuery.matches) {
-        element.addEventListener("click", () => toggleDropdown(element));
-    }
-});
-
-// Pressing Enter will redirect to the href
-const dropdownLinks = document.querySelectorAll(".cs-drop-li > .cs-li-link");
-dropdownLinks.forEach(link => {
-    link.addEventListener("keydown", function (event) {
-        if (event.key === "Enter") {
-            window.location.href = this.href;
-        }
-    });
-});
-
-// If you press Escape and the hamburger menu is open, close it
-document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && hamburgerMenu.classList.contains("cs-active")) {
-        toggleMenu();
-    }
-});
+renderAllDropdowns();
