@@ -1,7 +1,6 @@
 var CSbody = document.querySelector("body");
 const CSnavbarMenu = document.querySelector("#cs-navigation");
 const CShamburgerMenu = document.querySelector("#cs-navigation .cs-toggle");
-// added this
 const csUL = document.querySelector("#cs-expanded");
 
 CShamburgerMenu.addEventListener("click", function () {

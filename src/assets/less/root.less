@@ -324,62 +324,66 @@
 	}
 }
 
-/* Mobile - 360px */
+/*-- -------------------------- -->
+<---     Dark Mode Toggle       -->
+<--- -------------------------- -*/
+
+//* Mobile - 360px */
 @media only screen and (min-width: 0rem) {
 	body.dark-mode {
 		#dark-mode-toggle {
 			.cs-sun {
-				transform: translate(-50%, -50%);
 				opacity: 1;
+				transform: translate(-50%, -50%);
 			}
 
 			.cs-moon {
-				transform: translate(-50%, -150%);
 				opacity: 0;
+				transform: translate(-50%, -150%);
 			}
 		}
 	}
 
 	#dark-mode-toggle {
+		width: (48/16rem);
+		height: (48/16rem);
+		margin: 0;
+		padding: 0;
+		background: transparent;
+		border: none;
+		overflow: hidden;
+		display: block;
 		position: relative;
 		transform: none;
 		top: auto;
 		right: auto;
-		margin: 0;
-		display: block;
-		width: (48/16rem);
-		height: (48/16rem);
-		background: transparent;
-		border: none;
-		overflow: hidden;
-		padding: 0;
 		z-index: 1000;
 
 		img,
 		svg {
-			//center image inside button
+			/* center image inside button */
+			width: (20/16rem);
+			height: (20/16rem);
+			pointer-events: none;
 			position: absolute;
 			top: 50%;
 			left: 50%;
 			transform: translate(-50%, -50%);
-			width: (20/16rem);
-			height: (20/16rem);
-			pointer-events: none;
 		}
 
 		.cs-moon {
-			z-index: 2;
-			// Transition properties
-			transition: transform 0.3s, opacity 0.3s;
 			fill: #fff;
+			/* Transition properties */
+			transition: transform 0.3s, opacity 0.3s;
+			z-index: 2;
 		}
 
 		.cs-sun {
-			z-index: 1;
-			// Transition property
-			transform: translate(-50%, 100%);
 			opacity: 0;
+			/* Transition property */
+			transform: translate(-50%, 100%);
 			transition: transform 0.3s, opacity 0.3s;
+			z-index: 1;
 		}
 	}
 }
@@ -387,11 +391,11 @@
 /* Desktop - 1024px */
 @media only screen and (min-width: 64rem) {
 	#dark-mode-toggle {
+		margin: 0;
 		position: relative;
 		transform: none;
 		top: auto;
 		right: auto;
-		margin: 0;
 
 		&:hover {
 			cursor: pointer;
@@ -420,9 +424,9 @@ html {
 
 	#cs-navigation {
 		width: 100%;
-		padding: (12/16rem) (16/16rem);
 		/* prevents padding and border from affecting height and width */
 		box-sizing: border-box;
+		padding: (12/16rem) (16/16rem);
 		background-color: var(--headerColor);
 		position: fixed;
 		z-index: 10000;
@@ -430,11 +434,7 @@ html {
 		&.cs-active {
 			.cs-ul-wrapper {
 				opacity: 1;
-				transform: scaleY(1);
-			}
-
-			.cs-toggle {
-				transform: rotate(180deg);
+				visibility: visible;
 			}
 		}
 
@@ -445,9 +445,12 @@ html {
 			align-items: center;
 		}
 
+		--topbarHeight: clamp(5rem, 4vw, 7rem);
+		--ulWidth: min(60vw, 250px);
+
 		.cs-logo {
-			width: (75/16rem);
-			height: 100%;
+			width: auto;
+			height: var(--topbarHeight);
 			padding: 0;
 			display: flex;
 			justify-content: center;
@@ -484,7 +487,7 @@ html {
 				width: 100%;
 				top: 50%;
 				transform-origin: center;
-				transform: translateY(0) rotate(-585deg);
+				transform: translateY(0) rotate(135deg);
 			}
 		}
 
@@ -498,8 +501,8 @@ html {
 		.cs-line {
 			width: 100%;
 			height: 2px;
-			border-radius: 4px;
 			background-color: var(--bodyTextColorWhite);
+			border-radius: 4px;
 			position: absolute;
 			left: 0;
 		}
@@ -507,11 +510,11 @@ html {
 		.cs-line1 {
 			top: 0;
 			transform-origin: center;
-			transition: transform 0.5s, top 0.3s, left 0.3s, width 0.3s;
 			animation-duration: 0.7s;
 			animation-timing-function: ease;
 			animation-fill-mode: forwards;
 			animation-direction: normal;
+			transition: transform 0.5s, top 0.3s, left 0.3s, width 0.3s;
 		}
 
 		.cs-line2 {
@@ -519,17 +522,18 @@ html {
 			top: 50%;
 			left: 0;
 			transform: translateY(-50%);
-			transition: top 0.3s, left 0.3s, transform 0.5s;
 			animation-duration: 0.7s;
 			animation-timing-function: ease;
 			animation-fill-mode: forwards;
 			animation-direction: normal;
+			transition: top 0.3s, left 0.3s, transform 0.5s, width 0.3s;
 		}
 
 		.cs-graphic {
 			width: auto;
 			height: 30vw;
 			max-height: (650/16rem);
+			margin-top: calc(-1 * var(--topbarHeight));
 			opacity: 0.24;
 			display: none;
 		}
@@ -539,42 +543,41 @@ html {
 			height: 100vh;
 			opacity: 0;
 			background-color: var(--headerColor);
-			box-shadow: inset rgba(0, 0, 0, 0.2) 0px 8px 24px;
+			/* 32px - 108px */
+			gap: clamp(2rem, vw, 6.75rem);
+			visibility: hidden;
 			display: flex;
 			justify-content: flex-start;
 			align-items: center;
-			overflow: hidden;
 			position: absolute;
 			top: 100%;
 			left: 0;
 			z-index: -1;
-			transform: scaleY(0);
-			transform-origin: top;
-			transition: transform 0.4s, opacity 0.3s;
+			transition: transform 0.4s, opacity 0.3s, visibility 0.3s;
 		}
 
 		.cs-ul-wrapper2 {
+			width: auto;
 			height: auto;
 			max-height: 70vh;
 			padding-left: (16/16rem);
-			margin-top: (-100/16rem);
+			margin-top: calc(-1 * var(--topbarHeight));
+			flex: none;
 			overflow: auto;
+			gap: (20/16rem);
 			display: flex;
 			justify-content: flex-start;
 			align-items: flex-start;
-			flex: none;
-			gap: (20/16rem);
 			transition: transform 0.3s;
 
-			// Note: Better way to do, the calc is so that regardless of ul widths it works
 			&.cs-active {
-				transform: translateX(calc(-1 * min(60vw, 250px) + 3rem));
+				transform: translateX(calc(-1 * var(--ulWidth) + 3rem));
 			}
 		}
 
 		.cs-ul,
 		.cs-ul2 {
-			width: calc(min(60vw, 250px));
+			width: var(--ulWidth);
 			height: auto;
 			padding: 0;
 			margin: 0;
@@ -587,16 +590,19 @@ html {
 
 		.cs-ul {
 			flex: none;
+			position: relative;
+			z-index: 1;
+
 			&:before {
 				content: "";
-				position: absolute;
-				display: block;
-				height: 100%;
 				width: 1px;
+				height: 100%;
 				background: #fff;
 				opacity: 0.12;
+				display: block;
+				position: absolute;
 				top: 0;
-				right: 0;
+				left: 100%;
 				z-index: -1;
 			}
 		}
@@ -604,29 +610,31 @@ html {
 		.cs-ul2 {
 			opacity: 1;
 			visibility: visible;
+			transform: translateX(0);
 			position: relative;
-			transform: scale(1);
-			transform-origin: left;
-			transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+			transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s;
 
 			&.cs-hidden {
 				opacity: 0;
-				visibility: collapse;
+				visibility: hidden;
+				transform: translateX(-100%);
 				position: absolute;
 				right: 0;
-				transform: scale(0);
 			}
 		}
 
 		.cs-li {
-			flex: none;
 			width: 100%;
+			flex: none;
 			list-style: none;
-			display: flex;
+			background-color: var(--headerColor);
 			cursor: pointer;
+			display: flex;
 			transition: transform 0.6s, background-color 0.3s;
+
 			&.cs-active {
 				background-color: #fff;
+
 				.cs-li-link {
 					color: var(--primary);
 				}
@@ -639,15 +647,15 @@ html {
 			line-height: 1.2em;
 			text-decoration: none;
 			text-align: left;
-			padding: (16/16rem) (24/16rem);
-			margin: 0;
 			width: 100%;
 			height: 100%;
+			margin: 0;
+			padding: (16/16rem) (24/16rem);
 			color: var(--bodyTextColorWhite);
+			gap: (10/16rem);
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			gap: (10/16rem);
 			position: relative;
 		}
 
@@ -665,14 +673,15 @@ html {
 @media only screen and (min-width: 0rem) {
 	#cs-navigation {
 		.cs-li {
-			text-align: center;
 			width: 100%;
+			text-align: center;
 			display: flex;
 		}
 
 		.cs-dropdown {
 			&.cs-active {
 				background-color: #fff;
+
 				.cs-li-link {
 					color: var(--primary);
 				}
@@ -698,12 +707,12 @@ html {
 			overflow: hidden;
 			opacity: 0;
 			visibility: hidden;
+			flex: none;
+			display: flex;
+			flex-direction: column;
 			position: absolute;
 			top: 0;
 			left: 100%;
-			display: flex;
-			flex-direction: column;
-			flex: none;
 			transition: padding 0.3s, margin 0.3s, height 0.3s, opacity 0.3s, visibility 0.3s;
 		}
 
@@ -720,12 +729,6 @@ html {
 <--- -------------------------- -*/
 
 @media only screen and (min-width: 64rem) {
-	body {
-		&.cs-open {
-			overflow: hidden;
-		}
-	}
-
 	#cs-navigation {
 		.cs-graphic {
 			display: block;
@@ -734,6 +737,7 @@ html {
 		.cs-ul-wrapper {
 			justify-content: center;
 		}
+
 		.cs-ul-wrapper2 {
 			&.cs-active {
 				transform: translateX(0);
@@ -744,6 +748,7 @@ html {
 			&.cs-active,
 			&:hover {
 				background-color: #fff;
+
 				.cs-li-link {
 					color: var(--primary);
 				}
